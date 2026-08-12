@@ -28,3 +28,14 @@ Statelessness
 An API with no context of the user stored in API Server. It ideally works with Authorization header, like some cryptography like jwt.
 Idempotency
 Idempotent means we get the same result after doing a task multiple times as we did it once. In APIs there much idempotency HTTP methods like GET, DELETE, PUT. POST and PATCH can be non-idempotent
+
+In /jobs/42?include_company=true, which value is a path parameter and which is a query parameter?
+42 is the path value and true is the query value
+When should an API return 201 Created instead of 200 OK?
+201 comes in POST ig, which tells us creation was sucessfull
+Why is GET expected to be safe and idempotent?
+Because, It doesnt modify any data and idempotent because wont effect anything on the server, and result would be same until something is changed in server
+What is the difference between 401 Unauthorized and 403 Forbidden?
+Unauthorized mean that we are not allowed to do the operation with the current credential, token, or session. Forbidden comes usually when something is geo-blocked or user-blocked
+What does it mean when an HTTP API is stateless?
+When API server doesnt save the context or session. Works by mathematical computation.
