@@ -9,6 +9,7 @@ app = FastAPI(
     description="Backend service for aggregating and tracking job opportunities.",
     version="0.1.0",
 )
+id_counter = itertools.count(1)
 
 
 @app.get("/health")
@@ -37,9 +38,9 @@ class JobReturnModel(TypedDict):
 # id = 0
 @app.post("/job", status_code=status.HTTP_201_CREATED)
 def create_job(job: JobModel) -> JobReturnModel:
-    
+    id = next(id_counter)
     return {
-        "id": 1,
+        "id": id,
         "title": job.title,
         "company": job.company,
         "url": job.url,
