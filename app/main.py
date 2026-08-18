@@ -1,8 +1,8 @@
 import itertools
-from multiprocessing import JoinableQueue
 
 from fastapi import FastAPI, status
 from pydantic import BaseModel, Field, HttpUrl
+
 
 app = FastAPI(
     title="Jobflow Backend",
@@ -26,18 +26,24 @@ class JobCreate(BaseModel):
     source: str = Field(min_length=2, max_length=50)
 
 
-class JobResponse(BaseModel):
+class JobResponse(JobCreate):
     id: int
-    title: str = Field(min_length=2, max_length=120)
-    company: str = Field(min_length=2, max_length=120)
-    url: HttpUrl
-    location: str | None = None
-    source: str = Field(min_length=2, max_length=50)
+
 
 jobs: list[JobResponse] = []
+
+
 @app.post("/jobs", status_code=status.HTTP_201_CREATED, response_model=JobResponse)
 def create_job(job: JobCreate) -> JobResponse:
     job_id = next(id_counter)
-    created_job = JobResponse(id=job_id, **job.model_dump(),)
+    created_job = JobResponse(
+        id=job_id,
+        **job.model_dump(),
+    )
     jobs.append(created_job)
     return created_job
+
+
+@app.get("/jobs", status_code=status.HTTP_200_OK, response_model=list[JobResponse])
+def get_jobs() -> list[JobResponse]:
+    return jobs
