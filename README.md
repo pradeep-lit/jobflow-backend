@@ -23,9 +23,23 @@ Redis for caching
 Pytest for testing
 etc...
 ## Current API Endpoints
-/health - returns `{'status':'ok'}` when everything is ok in backend side
+GET /health - returns `{'status':'ok'}` when everything is ok in backend side
+
+POST /jobs - Creates Job and returns the JobResponse Model (request json + id)
+
+GET /jobs - Returns list of jobs present in server. Reponse Model - `list[JobResponse]`
+
 ## Local Setup
-I have added `pyproject.toml` for dependencies and etc. I have used `uv` so you can too.
+This project has `pyproject.toml` and `uv.lock` for dependencies and etc. I have used `uv` so you can too.
+Commands to setup with `uv`:
+```
+# For Usage:
+uv sync
+uvicorn app.main:app --reload
+# For Development/Testing:
+uv sync --dev
+uv run python -m pytest
+```
 ## Testing
 Using `pytest` for api testing of now
 ## Development Roadmap
