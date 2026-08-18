@@ -1,5 +1,5 @@
 import itertools
-from typing import TypedDict
+from multiprocessing import JoinableQueue
 
 from fastapi import FastAPI, status
 from pydantic import BaseModel, Field, HttpUrl
@@ -18,7 +18,7 @@ def health_check() -> dict[str, str]:
     return {"status": "ok"}
 
 
-class JobModel(BaseModel):
+class JobCreate(BaseModel):
     title: str = Field(min_length=2, max_length=120)
     company: str = Field(min_length=2, max_length=120)
     url: HttpUrl
@@ -26,24 +26,18 @@ class JobModel(BaseModel):
     source: str = Field(min_length=2, max_length=50)
 
 
-class JobReturnModel(TypedDict):
+class JobResponse(BaseModel):
     id: int
-    title: str
-    company: str
+    title: str = Field(min_length=2, max_length=120)
+    company: str = Field(min_length=2, max_length=120)
     url: HttpUrl
-    location: str | None
-    source: str
+    location: str | None = None
+    source: str = Field(min_length=2, max_length=50)
 
-
-# id = 0
-@app.post("/job", status_code=status.HTTP_201_CREATED)
-def create_job(job: JobModel) -> JobReturnModel:
-    id = next(id_counter)
-    return {
-        "id": id,
-        "title": job.title,
-        "company": job.company,
-        "url": job.url,
-        "location": job.location,
-        "source": job.source,
-    }
+jobs: list[JobResponse] = []
+@app.post("/jobs", status_code=status.HTTP_201_CREATED, response_model=JobResponse)
+def create_job(job: JobCreate) -> JobResponse:
+    job_id = next(id_counter)
+    created_job = JobResponse(id=job_id, **job.model_dump(),)
+    jobs.append(created_job)
+    return created_job
